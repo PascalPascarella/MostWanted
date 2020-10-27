@@ -12,6 +12,9 @@ function app(people){
       searchResults = searchByName(people);
       break;
     case 'no':
+      searchResults = searchByTrait(people);
+      displayPeople(searchResults);
+      // choose search by single or multiple trait
       // TODO: search by traits
       break;
       default:
@@ -69,6 +72,21 @@ function searchByName(people){
     }
   })
   return foundPerson[0];
+}
+s
+function searchByTrait(people){
+  // .trim() to remove whitespace
+  let traitQuery = promptFor("Enter trait: height, weight, age, eyeColor, gender, occupation: ", chars);
+  let traitValue = promptFor("Enter value for " + traitQuery, chars);
+  let foundPeople = people.filter(function(person){
+    if(person[traitQuery] == traitValue){
+      return true;
+    }
+    else{
+      return false;
+    }
+  })
+  return foundPeople;
 }
 
 // alerts a list of people
