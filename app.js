@@ -7,20 +7,37 @@ Build all of your functions for displaying and gathering information below (GUI)
 function app(people){
   let searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
   let searchResults;
-  switch(searchType){
-    case 'yes':
-      searchResults = searchByName(people);
-      break;
-    case 'no':
-      searchResults = searchByTrait(people);
-      displayPeople(searchResults);
-      // choose search by single or multiple trait
-      // TODO: search by traits
-      break;
-      default:
-    app(people); // restart app
-      break;
+  do{
+    switch(searchType){
+      case 'yes':
+        searchResults = searchByName(people);
+        break;
+      case 'no':
+        let numberOfTraits = Number(promptFor("How many traits do want to search for?", chars));
+        switch(numberOfTraits){
+          case "1":
+            searchResults = searchByTrait(people);
+            break;
+          default:
+            searchResults = searchByTraits(people, numberOfTraits);
+        }
+        // choose search by single or multiple trait
+        // TODO: search by traits
+        break;
+        default:
+          app(people); // restart app
+          break;
+        }
+        if(searchResults.length === 0){
+          prompt("No results found. Application will restart.")
+          app(people);
+        }
+        // Finish logic later - select to further refine or display one of result objects
+        else{
+          promptFor(displayPeople(searchResults));
+    }
   }
+  while(searchResults.length > 1)
   
   // Call the mainMenu function ONLY after you find the SINGLE person you are looking for
   mainMenu(searchResults, people);
@@ -42,7 +59,6 @@ function mainMenu(person, people){
     case "info":
       displayPerson(person);
       return mainMenu(person, people);
-    break;
     case "family":
     // TODO: get person's family
     break;
@@ -73,7 +89,7 @@ function searchByName(people){
   })
   return foundPerson[0];
 }
-s
+
 function searchByTrait(people){
   // .trim() to remove whitespace
   let traitQuery = promptFor("Enter trait: height, weight, age, eyeColor, gender, occupation: ", chars);
@@ -86,6 +102,14 @@ function searchByTrait(people){
       return false;
     }
   })
+  return foundPeople;
+}
+
+function searchByTraits(people, numberOfTraits){
+  let foundPeople = people;
+  for (let i = 0; i < numberOfTraits; i++){
+    foundPeople = searchByTrait(foundPeople);
+  }
   return foundPeople;
 }
 
