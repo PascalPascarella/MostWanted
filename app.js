@@ -37,7 +37,8 @@ function mainMenu(person, people){
 
   switch(displayOption){
     case "info":
-    // TODO: get person's info
+      displayPerson(person);
+      return mainMenu(person, people);
     break;
     case "family":
     // TODO: get person's family
@@ -67,8 +68,7 @@ function searchByName(people){
       return false;
     }
   })
-  // TODO: find the person using the name they entered
-  return foundPerson;
+  return foundPerson[0];
 }
 
 // alerts a list of people
@@ -83,8 +83,20 @@ function displayPerson(person){
   // height, weight, age, name, occupation, eye color.
   let personInfo = "First Name: " + person.firstName + "\n";
   personInfo += "Last Name: " + person.lastName + "\n";
+  personInfo += "Height: " + person.height + "\n";
+  personInfo += "Weight: " + person.weight + "\n";
+  personInfo += "Age: " + calculateAge(new Date(person.dob)) + "\n";
+  personInfo += "Occupation: " + person.occupation + "\n";
+  personInfo += "Eye Color: " + person.eyeColor + "\n";
   // TODO: finish getting the rest of the information to display
   alert(personInfo);
+}
+
+function calculateAge(dob){
+  let now = new Date();
+  let age = now - dob;
+  age = Math.floor(age/1000/60/60/24/365.25);
+  return age
 }
 
 // function that prompts and validates user input
