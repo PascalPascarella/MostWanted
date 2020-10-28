@@ -21,7 +21,6 @@ function app(people){
   }
   mainMenu(searchResults, people);
 }
-      
 
 // Menu function to call once you find who you are looking for
 function mainMenu(person, people){
@@ -41,12 +40,12 @@ function mainMenu(person, people){
       return mainMenu(person, people);
     case "family":
       let family = listFamily(person, people);
-      alert("Family of " + person.firstName + " " + person.lastName + ":\n" + family);
+      alert("Family of " + person.firstName + " " + person.lastName + ":\n\n" + family);
       return mainMenu(person, people);
     break;
     case "descendants":
       let descendants = findDescendants(person, people);
-      displayPeople(descendants);
+      alert(listPeopleAsString(descendants, ("Descendants of " + person.firstName + " " + person.lastName + ":\n")));
       return mainMenu(person, people);
     break;
     case "restart":
@@ -82,15 +81,27 @@ function listFamily(person, people) {
         }
       }
     }
-  output += "PARENTS\n" + listPeopleAsString(parents) + "\n";
-  output += "SIBLINGS\n" + listPeopleAsString(siblings) + "\n";
+  output += listPeopleAsString(parents, "PARENTS");
+  output += listPeopleAsString(siblings, "SIBLINGS");
   if(spouse !== undefined){
-    output += "SPOUSE\n" + spouse.firstName + " " + spouse.lastName + "\n";
+    output += "SPOUSE\n" + spouse.firstName + " " + spouse.lastName + "\n\n";
   } else {
-    output += "SPOUSE\nNo results.\n"
+    output += "SPOUSE\nNo results.\n\n"
   }
-  output += "CHILDREN\n" + listPeopleAsString(children);
+  output += listPeopleAsString(children, "CHILDREN");
   return output;
+}
+
+function listPeopleAsString(people, titleOfDataSet){
+  let string;
+    if(people.length > 0){
+      string = people.map(function(person){
+        return " " + " " + " " + "-" + person.firstName + " " + person.lastName;
+      }).join("\n");
+    } else {
+      string = "No results."
+    }
+  return string = titleOfDataSet + "\n" + string;
 }
 
 function findDescendants(person, people) {
@@ -105,18 +116,6 @@ function findDescendants(person, people) {
     );
   }
   return descendants;
-}
-
-function listPeopleAsString(people){
-  let string;
-    if(people.length > 0){
-      string = people.map(function(person){
-        return person.firstName + " " + person.lastName;
-      }).join("\n");
-    } else {
-      string = "No results."
-    }
-  return string;
 }
 
 function searchByName(people){
@@ -160,8 +159,7 @@ function searchByTraits(people, numberOfTraits){
       return app(people);
     }
     else{
-      displayPeople(foundPeople);
-      let userInput = promptFor("Continue to 'refine' by trait, or 'choose' person to display.", chars);
+      let userInput = promptFor(listPeopleAsString(foundPeople, (foundPeople.length + " people matching your search:")) + "\nContinue to 'refine' by trait, or 'choose' person to display.", chars);
       switch(userInput){
         case "refine":
           foundPeople = searchByTrait(foundPeople);
@@ -177,13 +175,6 @@ function searchByTraits(people, numberOfTraits){
     }
   }
   while(true);
-}
-
-// alerts a list of people
-function displayPeople(people){
-  alert(people.map(function(person){
-    return person.firstName + " " + person.lastName;
-  }).join("\n"));
 }
 
 function displayPerson(person){
