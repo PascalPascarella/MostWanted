@@ -5,14 +5,14 @@ Build all of your functions for displaying and gathering information below (GUI)
 
 // app is the function called to start the entire application
 function app(people){
-  let searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
+  let searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo);
   let searchResults;
   switch(searchType){
     case 'yes':
       searchResults = searchByName(people);
       break;
     case 'no':
-      let numberOfTraits = Number(promptFor("How many traits do want to search for?", chars));
+      let numberOfTraits = Number(promptFor("How many traits do want to search for?", number));
       searchResults = searchByTraits(people, numberOfTraits);
       break;
     default:
@@ -32,7 +32,7 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  let displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
+  let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", chars);
 
   switch(displayOption){
     case "info":
@@ -135,13 +135,20 @@ function searchByName(people){
 
 let traits = [];
 
+function traitsToString(traits) {
+  let traitsList = "";
+  traits.forEach(element => {
+    traitsList += element;
+  });
+  return traitsList;
+}
+
 function searchByTrait(people){
-  // .trim() to remove whitespace
-  let traitQuery = promptFor("Enter trait: height, weight, age, eyeColor, gender, occupation: ", chars);
+  let traitQuery = promptFor("Enter trait: height, weight, age, eye color, gender, occupation", trait);
   let traitValue = promptFor("Enter value for " + traitQuery, chars);
-  traits.push(traitQuery + " of " + traitValue);
+  traits.push("\n" + traitQuery + " of " + traitValue);
   let foundPeople = people.filter(function(person){
-    if(person[traitQuery] == traitValue){
+    if(person[simplifier(traitQuery)] == traitValue){
       return true;
     }
     else{
@@ -158,11 +165,11 @@ function searchByTraits(people, numberOfTraits){
   }
   do{
     if(foundPeople.length === 0){
-      prompt("No results found. Application will restart.")
+      alert("No results found. Application will restart.")
       return app(people);
     }
     else{
-      let userInput = promptFor(listPeopleAsString(foundPeople, (foundPeople.length + " people matching your search for: " + traits[0])) + "\nContinue to 'refine' by trait, or 'choose' person to display.", chars);
+      let userInput = promptFor(listPeopleAsString(foundPeople, (foundPeople.length + " people matching your search for:" + traitsToString(traits))) + "\nContinue to 'refine' by trait, or 'choose' person to display.", refineChoose);
       switch(userInput){
         case "refine":
           foundPeople = searchByTrait(foundPeople);
@@ -172,7 +179,8 @@ function searchByTraits(people, numberOfTraits){
           for (let i = 0; i < foundPeople.length; i++){
             output += "\nPress " + i + " for " + foundPeople[i].firstName + " " + foundPeople[i].lastName;
           }
-          let chosenPerson = promptFor(output, chars);
+          let chosenPerson = promptFor(output, number);
+          traits = [];
           return foundPeople[chosenPerson];
       }
     }
@@ -189,7 +197,7 @@ function displayPerson(person){
   personInfo += "Weight: " + person.weight + "\n";
   personInfo += "Age: " + calculateAge(new Date(person.dob)) + "\n";
   personInfo += "Occupation: " + person.occupation + "\n";
-  personInfo += "Eye Color: " + person.eyeColor + "\n";
+  personInfo += "Eye Color: " + person.eyecolor + "\n";
   // TODO: finish getting the rest of the information to display
   alert(personInfo);
 }
@@ -211,10 +219,54 @@ function promptFor(question, valid){
 
 // helper function to pass into promptFor to validate yes/no answers
 function yesNo(input){
-  return input.toLowerCase() == "yes" || input.toLowerCase() == "no";
+  return simplifier(input) == "yes" || simplifier(input) == "no";
 }
+
+function refineChoose(input){
+  return simplifier(input) == "refine" || simplifier(input) == "choose";
+}
+
+// Refine validation
+/*
+function twoChoices(input, choiceOne, choiceTwo) {
+  return simplifier(input) == choiceOne || simplifier(input) == choiceTwo;
+}
+*/
 
 // helper function to pass in as default promptFor validation
 function chars(input){
-  return true; // default validation only
+  let chars = /^[A-Za-z]+$/;
+  for (let i = 0; i < input.length; i++) {
+    if (input[i].match(chars)) {
+        return true;
+    }
+    if (number(input)){
+      return true;
+    }
+  }
+  return false; // default validation only
+}
+
+function number(input){
+  let numbers = /^[0-9]+$/;
+  for (let i = 0; i < input.length; i++) {
+    if (input[i].match(numbers)) {
+        return true;
+    }
+  }
+  return false; // default validation only
+}
+
+function trait(input){
+  let traits = ["height", "weight", "age", "eyecolor", "gender", "occupation"]
+  for (let i = 0; i < traits.length; i++) {
+    if (simplifier(input).match(traits[i])) {
+        return true;
+    }
+  }
+  return false;
+}
+
+function simplifier(input){
+  return input.toLowerCase().split(" ").join("");
 }
