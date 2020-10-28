@@ -133,10 +133,13 @@ function searchByName(people){
   return foundPerson[0];
 }
 
+let traits = [];
+
 function searchByTrait(people){
   // .trim() to remove whitespace
   let traitQuery = promptFor("Enter trait: height, weight, age, eyeColor, gender, occupation: ", chars);
   let traitValue = promptFor("Enter value for " + traitQuery, chars);
+  traits.push(traitQuery + " of " + traitValue);
   let foundPeople = people.filter(function(person){
     if(person[traitQuery] == traitValue){
       return true;
@@ -159,7 +162,7 @@ function searchByTraits(people, numberOfTraits){
       return app(people);
     }
     else{
-      let userInput = promptFor(listPeopleAsString(foundPeople, (foundPeople.length + " people matching your search:")) + "\nContinue to 'refine' by trait, or 'choose' person to display.", chars);
+      let userInput = promptFor(listPeopleAsString(foundPeople, (foundPeople.length + " people matching your search for: " + traits[0])) + "\nContinue to 'refine' by trait, or 'choose' person to display.", chars);
       switch(userInput){
         case "refine":
           foundPeople = searchByTrait(foundPeople);
