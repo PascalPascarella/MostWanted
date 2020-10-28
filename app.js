@@ -7,42 +7,21 @@ Build all of your functions for displaying and gathering information below (GUI)
 function app(people){
   let searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
   let searchResults;
-  do{
-    switch(searchType){
-      case 'yes':
-        searchResults = searchByName(people);
-        return mainMenu(searchResults, people);
-        break;
-      case 'no':
-        let numberOfTraits = Number(promptFor("How many traits do want to search for?", chars));
-        switch(numberOfTraits){
-          case "1":
-            searchResults = searchByTrait(people);
-            break;
-          default:
-            searchResults = searchByTraits(people, numberOfTraits);
-        }
-        // choose search by single or multiple trait
-        // TODO: search by traits
-        break;
-        default:
-          app(people); // restart app
-          break;
-        }
-        if(searchResults.length === 0){
-          prompt("No results found. Application will restart.")
-          app(people);
-        }
-        // Finish logic later - select to further refine or display one of result objects
-        else{
-          promptFor(displayPeople(searchResults));
-    }
+  switch(searchType){
+    case 'yes':
+      searchResults = searchByName(people);
+      break;
+    case 'no':
+      let numberOfTraits = Number(promptFor("How many traits do want to search for?", chars));
+      searchResults = searchByTraits(people, numberOfTraits);
+      break;
+    default:
+      app(people); // restart app
+      break;
   }
-  while(searchResults.length > 1)
-  
-  // Call the mainMenu function ONLY after you find the SINGLE person you are looking for
   mainMenu(searchResults, people);
 }
+      
 
 // Menu function to call once you find who you are looking for
 function mainMenu(person, people){
@@ -61,23 +40,22 @@ function mainMenu(person, people){
       displayPerson(person);
       return mainMenu(person, people);
     case "family":
-    // TODO: get person's family
       let family = listFamily(person, people);
       alert("Family of " + person.firstName + " " + person.lastName + ":\n" + family);
-    return mainMenu(person, people);
+      return mainMenu(person, people);
     break;
     case "descendants":
       let descendants = findDescendants(person, people);
       displayPeople(descendants);
-    // TODO: get person's descendants
+      return mainMenu(person, people);
     break;
     case "restart":
-    app(people); // restart
-    break;
+      app(people); // restart
+      break;
     case "quit":
-    return; // stop execution
+      return; // stop execution
     default:
-    return mainMenu(person, people); // ask again
+      return mainMenu(person, people); // ask again
   }
 }
 
@@ -176,7 +154,29 @@ function searchByTraits(people, numberOfTraits){
   for (let i = 0; i < numberOfTraits; i++){
     foundPeople = searchByTrait(foundPeople);
   }
-  return foundPeople;
+  do{
+    if(foundPeople.length === 0){
+      prompt("No results found. Application will restart.")
+      return app(people);
+    }
+    else{
+      displayPeople(foundPeople);
+      let userInput = promptFor("Continue to 'refine' by trait, or 'choose' person to display.", chars);
+      switch(userInput){
+        case "refine":
+          foundPeople = searchByTrait(foundPeople);
+          break;
+        case "choose":
+          let output = "Choose person to display:";
+          for (let i = 0; i < foundPeople.length; i++){
+            output += "\nPress " + i + " for " + foundPeople[i].firstName + " " + foundPeople[i].lastName;
+          }
+          let chosenPerson = promptFor(output, chars);
+          return foundPeople[chosenPerson];
+      }
+    }
+  }
+  while(true);
 }
 
 // alerts a list of people
