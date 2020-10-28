@@ -62,11 +62,13 @@ function mainMenu(person, people){
       return mainMenu(person, people);
     case "family":
     // TODO: get person's family
-    let family = listFamily(person, people);
-    alert("Family of " + person.firstName + " " + person.lastName + ":\n" + family);
+      let family = listFamily(person, people);
+      alert("Family of " + person.firstName + " " + person.lastName + ":\n" + family);
     return mainMenu(person, people);
     break;
     case "descendants":
+      let descendants = findDescendants(person, people);
+      displayPeople(descendants);
     // TODO: get person's descendants
     break;
     case "restart":
@@ -111,6 +113,20 @@ function listFamily(person, people) {
   }
   output += "CHILDREN\n" + listPeopleAsString(children);
   return output;
+}
+
+function findDescendants(person, people) {
+  let descendants = [];
+  for (let i = 0; i < people.length; i++){
+    if(people[i].parents.includes(person.id)){
+      descendants.push(people[i]);
+    }
+  }
+  for (let i = 0; i < descendants.length; i++) {
+    descendants = descendants.concat(findDescendants(descendants[i], people)
+    );
+  }
+  return descendants;
 }
 
 function listPeopleAsString(people){
