@@ -11,6 +11,7 @@ function app(people){
     switch(searchType){
       case 'yes':
         searchResults = searchByName(people);
+        return mainMenu(searchResults, people);
         break;
       case 'no':
         let numberOfTraits = Number(promptFor("How many traits do want to search for?", chars));
@@ -61,6 +62,9 @@ function mainMenu(person, people){
       return mainMenu(person, people);
     case "family":
     // TODO: get person's family
+    let family = listFamily(person, people);
+    alert("Family of " + person.firstName + " " + person.lastName + ":\n" + family);
+    return mainMenu(person, people);
     break;
     case "descendants":
     // TODO: get person's descendants
@@ -73,6 +77,52 @@ function mainMenu(person, people){
     default:
     return mainMenu(person, people); // ask again
   }
+}
+
+function listFamily(person, people) {
+  let parents = [];
+  let siblings = [];
+  let children = [];
+  let spouse;
+  let output = "";
+    for (let i = 0; i < people.length; i++){
+      if(person.id !== people[i].id){
+        if(people[i].parents.includes(person.id)){
+          children.push(people[i]);
+        } else if(person.parents.includes(people[i].id)){
+          parents.push(people[i]);
+        } else if(person.id === people[i].currentSpouse){
+          spouse = people[i];
+        } else {
+          for(let index = 0; index < person.parents.length && !siblings.includes(people[i]); index++){
+            if(people[i].parents.includes(person.parents[index])){
+              siblings.push(people[i])
+            }
+          }
+        }
+      }
+    }
+  output += "PARENTS\n" + listPeopleAsString(parents) + "\n";
+  output += "SIBLINGS\n" + listPeopleAsString(siblings) + "\n";
+  if(spouse !== undefined){
+    output += "SPOUSE\n" + spouse.firstName + " " + spouse.lastName + "\n";
+  } else {
+    output += "SPOUSE\nNo results.\n"
+  }
+  output += "CHILDREN\n" + listPeopleAsString(children);
+  return output;
+}
+
+function listPeopleAsString(people){
+  let string;
+    if(people.length > 0){
+      string = people.map(function(person){
+        return person.firstName + " " + person.lastName;
+      }).join("\n");
+    } else {
+      string = "No results."
+    }
+  return string;
 }
 
 function searchByName(people){
