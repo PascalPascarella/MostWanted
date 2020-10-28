@@ -32,7 +32,7 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", chars);
+  let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + ". Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", chars);
 
   switch(displayOption){
     case "info":
@@ -84,9 +84,9 @@ function listFamily(person, people) {
   output += listPeopleAsString(parents, "PARENTS");
   output += listPeopleAsString(siblings, "SIBLINGS");
   if(spouse !== undefined){
-    output += "SPOUSE\n" + spouse.firstName + " " + spouse.lastName + "\n\n";
+    output += "SPOUSE\n" + " " + " " + " " + "-" + spouse.firstName + " " + spouse.lastName + "\n\n";
   } else {
-    output += "SPOUSE\nNo results.\n\n"
+    output += "SPOUSE\n" + " " + " " + " " + "-" + "No results.\n\n"
   }
   output += listPeopleAsString(children, "CHILDREN");
   return output;
@@ -99,7 +99,7 @@ function listPeopleAsString(people, titleOfDataSet){
         return " " + " " + " " + "-" + person.firstName + " " + person.lastName;
       }).join("\n");
     } else {
-      string = "No results."
+      string = " " + " " + " " + "-" + "No results.\n\n"
     }
   return string = titleOfDataSet + "\n" + string;
 }
@@ -177,7 +177,7 @@ function searchByTraits(people, numberOfTraits){
         case "choose":
           let output = "Choose person to display:";
           for (let i = 0; i < foundPeople.length; i++){
-            output += "\nPress " + i + " for " + foundPeople[i].firstName + " " + foundPeople[i].lastName;
+            output += "\nEnter " + i + " for " + foundPeople[i].firstName + " " + foundPeople[i].lastName;
           }
           let chosenPerson = promptFor(output, number);
           traits = [];
@@ -193,8 +193,8 @@ function displayPerson(person){
   // height, weight, age, name, occupation, eye color.
   let personInfo = "First Name: " + person.firstName + "\n";
   personInfo += "Last Name: " + person.lastName + "\n";
-  personInfo += "Height: " + person.height + "\n";
-  personInfo += "Weight: " + person.weight + "\n";
+  personInfo += "Height: " + person.height + "\"\n";
+  personInfo += "Weight: " + person.weight + " lbs.\n";
   personInfo += "Age: " + calculateAge(new Date(person.dob)) + "\n";
   personInfo += "Occupation: " + person.occupation + "\n";
   personInfo += "Eye Color: " + person.eyecolor + "\n";
