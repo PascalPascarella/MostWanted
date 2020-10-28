@@ -42,12 +42,10 @@ function mainMenu(person, people){
       let family = listFamily(person, people);
       alert("Family of " + person.firstName + " " + person.lastName + ":\n\n" + family);
       return mainMenu(person, people);
-    break;
     case "descendants":
       let descendants = findDescendants(person, people);
       alert(listPeopleAsString(descendants, ("Descendants of " + person.firstName + " " + person.lastName + ":\n")));
       return mainMenu(person, people);
-    break;
     case "restart":
       app(people); // restart
       break;
@@ -62,7 +60,7 @@ function listFamily(person, people) {
   let parents = [];
   let siblings = [];
   let children = [];
-  let spouse;
+  let spouse = [];
   let output = "";
     for (let i = 0; i < people.length; i++){
       if(person.id !== people[i].id){
@@ -81,14 +79,10 @@ function listFamily(person, people) {
         }
       }
     }
-  output += listPeopleAsString(parents, "PARENTS");
-  output += listPeopleAsString(siblings, "SIBLINGS");
-  if(spouse !== undefined){
-    output += "SPOUSE\n" + " " + " " + " " + "-" + spouse.firstName + " " + spouse.lastName + "\n\n";
-  } else {
-    output += "SPOUSE\n" + " " + " " + " " + "-" + "No results.\n\n"
-  }
-  output += listPeopleAsString(children, "CHILDREN");
+  output += listPeopleAsString(parents, "PARENTS")
+    + listPeopleAsString(siblings, "SIBLINGS")
+    + listPeopleAsString(spouse, "SPOUSE")
+    + listPeopleAsString(children, "CHILDREN");
   return output;
 }
 
@@ -225,13 +219,6 @@ function yesNo(input){
 function refineChoose(input){
   return simplifier(input) == "refine" || simplifier(input) == "choose";
 }
-
-// Refine validation
-/*
-function twoChoices(input, choiceOne, choiceTwo) {
-  return simplifier(input) == choiceOne || simplifier(input) == choiceTwo;
-}
-*/
 
 // helper function to pass in as default promptFor validation
 function chars(input){
